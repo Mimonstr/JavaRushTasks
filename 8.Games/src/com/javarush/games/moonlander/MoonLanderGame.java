@@ -18,6 +18,9 @@ public class MoonLanderGame extends Game
     private Rocket rocket;
     private GameObject landscape;
 
+    private boolean isGameStopped;
+    private int score;
+
     @Override
     public void initialize()
     {
@@ -33,7 +36,9 @@ public class MoonLanderGame extends Game
         isUpPressed = false;
         isLeftPressed = false;
         isRightPressed = false;
+        isGameStopped = false;
         drawScene();
+        score = 1000;
     }
 
     private void drawScene()
@@ -57,6 +62,11 @@ public class MoonLanderGame extends Game
         rocket.move(isUpPressed, isLeftPressed, isRightPressed);
         check();
         drawScene();
+        if (score > 0) 
+        {
+            score--;
+        }
+        setScore(score);
     }
 
     @Override
@@ -92,6 +102,10 @@ public class MoonLanderGame extends Game
             case UP: isUpPressed = true;
             break;
         }
+        if (isGameStopped && Key.SPACE == key)
+        {
+            createGame();
+        }
     }
 
     @Override
@@ -106,6 +120,7 @@ public class MoonLanderGame extends Game
             case RIGHT: isRightPressed = false;
             break;
         }
+
     }
 
     //будет проверять пересечение координат ракеты и ландшафта.
@@ -117,11 +132,18 @@ public class MoonLanderGame extends Game
 
     private void win()
     {
-
+        rocket.land();
+        isGameStopped = true;
+        showMessageDialog(Color.WHITE, "YOU WIN", Color.GREEN, 50);
+        stopTurnTimer();
     }
     private void gameOver()
     {
-
+        rocket.crash();
+        isGameStopped = true;
+        showMessageDialog(Color.NONE, "GAME OVER", Color.RED, 50);
+        stopTurnTimer();
+        score = 0;
     }
 
 }
